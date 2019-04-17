@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,21 +34,36 @@ namespace TRPO_1._4
             try
             {
                 num = int.Parse(nm.Text); //num присваивается значение входящих данных
+                if (DigitSimple(num) == true)
+                    lb.Items.Add(Convert.ToString(num));
+                else
+                {
+                    throw new ArgumentException("Число не является простым.");
+                }
             }
-            catch(FormatException)
+            catch (FormatException)
             {
                 string st = "Вводится символ, не являющийся числом.";
                 MessageBox.Show(st, "Error", MessageBoxButton.OK);
             }
-            
-
-            if (DigitSimple(num))
-                lb.Items.Add(num);
+            catch (ArgumentException)
+            {
+                string st1 = "Число не является простым.";
+                MessageBox.Show(st1, "Error", MessageBoxButton.OK);
+            }
         }
 
         private void Nm_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //num = int.Parse(nm.Text);
+            //try
+            //{
+            //    num = int.Parse(nm.Text); //num присваивается значение входящих данных
+            //}
+            //catch (FormatException)
+            //{
+            //    string st = "Вводится символ, не являющийся числом.";
+            //    MessageBox.Show(st, "Error", MessageBoxButton.OK);
+            //}
             //num присваивается значение входящих данных
         }
 
@@ -65,7 +81,7 @@ namespace TRPO_1._4
             {
                 try
                 {
-                    foreach (string line in lb.Items) //System.InvalidCastException
+                    foreach (string line in lb.Items)
                         outputFile.WriteLine(line);
                 }
                 catch (InvalidCastException)
@@ -84,19 +100,37 @@ namespace TRPO_1._4
             dialog.ShowDialog();
 
             string line;
-            StreamReader file = new StreamReader(@"C:\Users\Admin\Documents\Document.txt");
-            while ((line = file.ReadLine()) != null)
+            try
             {
-                if ((DigitSimple(num)==false))
+                StreamReader file = new StreamReader(@"C:\Document.txt");
+
+                while ((line = file.ReadLine()) != null)
                 {
-                    string st = "Некорректное содержимое файла.";
-                    MessageBox.Show(st, "Error", MessageBoxButton.OK);
+                    try
+                    {
+                        if ((DigitSimple(int.Parse(line)) == false))
+                        {
+                            throw new InvalidFileContent("Некорректное содержимое файла. \nВ файле содержатся не только простые числа.");
+                        }
+                        else
+                            lb.Items.Add(line);
+                    }
+                    catch
+                    {
+                        string st1 = "Некорректное содержимое файла. \nВ файле содержатся не только простые числа.";
+                        MessageBox.Show(st1, "Error", MessageBoxButton.OK);
+                        break;
+                    }
                 }
-                else
-                    lb.Items.Add(line);
+
+                file.Close();
             }
-            file.Close();
-            //C:\Users\Администратор\Documents\Document.txt
+            catch (FileNotFoundException)
+            {
+                string st = "Файл 'C:/Document.txt' не найден.";
+                MessageBox.Show(st, "Error", MessageBoxButton.OK);
+            }
+            //C:\Users\Admin\Documents\Document.txt
         }
 
         private bool DigitSimple(int num)
@@ -108,8 +142,6 @@ namespace TRPO_1._4
                 {
                     if ((num % i) == 0)
                     {
-                        string st = "Число не является простым.";
-                        MessageBox.Show(st, "Error", MessageBoxButton.OK);
                         return false;
                     }
                 }
@@ -117,10 +149,19 @@ namespace TRPO_1._4
             }
             else
             {
-                string st = "Число не является простым.";
-                MessageBox.Show(st, "Error", MessageBoxButton.OK);
                 return false;
             }
         }
+    }
+
+    public class InvalidFileContent : ApplicationException
+    {
+        public InvalidFileContent() { }
+
+        public InvalidFileContent(string message) : base(message) { }
+
+        public InvalidFileContent(string message, Exception inner) : base(message, inner) { }
+
+        protected InvalidFileContent(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }
