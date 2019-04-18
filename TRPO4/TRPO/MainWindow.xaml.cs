@@ -79,15 +79,8 @@ namespace TRPO_1._4
 
             using (StreamWriter outputFile = new StreamWriter(dialog.FileName))
             {
-                try
-                {
-                    foreach (string line in lb.Items)
-                        outputFile.WriteLine(line);
-                }
-                catch (InvalidCastException)
-                {
-
-                }
+                foreach (string line in lb.Items)
+                    outputFile.WriteLine(line);
             }
         }
 
@@ -102,7 +95,7 @@ namespace TRPO_1._4
             string line;
             try
             {
-                StreamReader file = new StreamReader(@"C:\Document.txt");
+                StreamReader file = new StreamReader(@"C:\Users\Admin\Documents\Document.txt");
 
                 while ((line = file.ReadLine()) != null)
                 {
@@ -119,7 +112,6 @@ namespace TRPO_1._4
                     {
                         string st1 = "Некорректное содержимое файла. \nВ файле содержатся не только простые числа.";
                         MessageBox.Show(st1, "Error", MessageBoxButton.OK);
-                        break;
                     }
                 }
 
