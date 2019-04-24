@@ -16,6 +16,10 @@ namespace TRPO5_test
             Functions f = new Functions();
             Assert.AreEqual(7.62, f.Convertik(3));
 
+            Assert.AreEqual(7.62, f.Convertik(double.MaxValue));
+            //var ex1 = Assert.Throws<Exception>(() => f.Convertik(double.MaxValue));
+            Assert.That(ex1.Message, Is.EqualTo("Не лезь..."));
+
             var ex = Assert.Throws<Exception>(() => f.Convertik(-3));
             Assert.That(ex.Message, Is.EqualTo("Входящее значение не может быть меньше, либо равным нулю."));
         }
@@ -34,7 +38,7 @@ namespace TRPO5_test
         public void Ostatok()
         {
             Functions f = new Functions();
-            Assert.AreEqual(0, f.Ostatok(2,2));
+            Assert.AreEqual(0, f.Ostatok(-2,2));
             Assert.AreEqual(1, f.Ostatok(5,2));
             Assert.AreEqual(2, f.Ostatok(5, 3));
             var ex = Assert.Throws<Exception>(() => f.Ostatok(2, 0));
